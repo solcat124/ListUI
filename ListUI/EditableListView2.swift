@@ -10,7 +10,7 @@
 
 /*
  A model defines a list. A user can modify the list through a view. Any changes in the view are applied to the model list.
- Supported odifications:
+ Supported user actions:
     Delete items (backspace, delete, or control-right-click)
     Add item (button appearing in the list)
     Move items (drag and move)

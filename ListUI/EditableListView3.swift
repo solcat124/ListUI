@@ -9,7 +9,7 @@
 
 /*
  A model defines a list. A user can modify the list through a view. Any changes in the view are applied to the model list.
- Supported odifications:
+ Supported user actions:
     Delete items (backspace, delete, or control-right-click)
     Add item (button appearing in the list)
     Move items (drag and move)
@@ -30,17 +30,17 @@ import SwiftUI
 /**
  Display a given item in the list.
  */
-struct DesertView: View {
-    @State var desert: Desert
-    @StateObject var desertClass = gDeserts
+struct DessertView: View {
+    @State var dessert: Dessert
+    @StateObject var dessertClass = gDesserts
     
     var body: some View {
         HStack {
-            TextField("", text: $desert.name, onCommit: {
-                print(desert.name)
-                renameDesert(desert)
+            TextField("", text: $dessert.name, onCommit: {
+                print(dessert.name)
+                renameDessert(dessert)
             })
-            Text(desert.icon)
+            Text(dessert.icon)
         }
     }
 }
@@ -49,33 +49,33 @@ struct DesertView: View {
  Display and provide user interations for the list.
  */
 struct EditableListView3: View {
-    @StateObject var desertsClass =  gDeserts
-//    @State var deserts = gDeserts.deserts                    // the list defined in the model
-    @State var selectedItem = gDeserts.deserts[3]                    // selection needs to correspond to a list item
+    @StateObject var dessertsClass =  gDesserts
+//    @State var desserts = gDesserts.desserts                    // the list defined in the model
+    @State var selectedItem = gDesserts.desserts[3]                    // selection needs to correspond to a list item
     
     var body: some View {
         VStack(alignment:.leading) {
             
             VStack(alignment: .leading) {
-                Text("Available deserts")
+                Text("Available desserts")
                     .foregroundColor(headingColor)
                     .font(.system(size: heading1FontSize))
                     .padding(.top)
                 Spacer()
                 
-                Text("Select a desert:")
+                Text("Select a dessert:")
                 HStack {
                     // The .onMove modifier is available on ForEach but not List: use ForEach instead.
                     List(selection: $selectedItem) {
-                        ForEach(desertsClass.deserts, id: \.self) { desert in                  // \.self is needed to highlight selection
-                            DesertView(desert: desert)
+                        ForEach(dessertsClass.desserts, id: \.self) { dessert in                  // \.self is needed to highlight selection
+                            DessertView(dessert: dessert)
                                 .contextMenu {
                                     Button(action: {
-                                        print("select item: \(selectedItem), item to delete item: \(desert)")
-                                        let idx = desertsClass.deserts.firstIndex(where: { $0 == desert } )
+                                        print("select item: \(selectedItem), item to delete item: \(dessert)")
+                                        let idx = dessertsClass.desserts.firstIndex(where: { $0 == dessert } )
                                         if idx != nil {
-                                            desertsClass.deserts.remove(at: idx!)
-                                            removeDesert(at: idx!)
+                                            dessertsClass.desserts.remove(at: idx!)
+                                            removeDessert(at: idx!)
                                         }
                                     }) {
                                         Text("Delete")
@@ -84,29 +84,29 @@ struct EditableListView3: View {
                         }
                         .onMove{indices, offset in
                             withAnimation {
-                                desertsClass.deserts.move(fromOffsets: indices, toOffset: offset)
-                                reorderDeserts()
+                                dessertsClass.desserts.move(fromOffsets: indices, toOffset: offset)
+                                reorderDesserts()
                             }
                         }
                         
                         Button(action: {
-                            let newItem = Desert(name: "New Item \(desertsClass.deserts.count)", icon: "")
-                            desertsClass.deserts.append(newItem)
-                            addDesert(newItem)
+                            let newItem = Dessert(name: "New Item \(dessertsClass.desserts.count)", icon: "")
+                            dessertsClass.desserts.append(newItem)
+                            addDessert(newItem)
                         }, label: {
                             Label("Add", systemImage: "plus")
                         })
                     }
                     .onDeleteCommand {
                         print("select item: \(selectedItem)")
-                        let idx = desertsClass.deserts.firstIndex(where: { $0 == selectedItem } )
+                        let idx = dessertsClass.desserts.firstIndex(where: { $0 == selectedItem } )
                         if idx != nil {
-                            desertsClass.deserts.remove(at: idx!)
-                            removeDesert(at: idx!)
+                            dessertsClass.desserts.remove(at: idx!)
+                            removeDessert(at: idx!)
                         }
                     }
                     .onChange(of: selectedItem) { oldSelection, newSelection in
-                        selectedDesert(old: oldSelection, new: newSelection)
+                        selectedDessert(old: oldSelection, new: newSelection)
                     }
                 }
             }
@@ -120,7 +120,7 @@ struct EditableListView3: View {
 }
 
 //    func deleteItems(at offsets: IndexSet) {
-//        deserts.remove(atOffsets: offsets)
+//        desserts.remove(atOffsets: offsets)
 //    }
 
 
@@ -131,7 +131,7 @@ import Foundation
 /**
  Definition of a list item.
  */
-struct Desert: Identifiable, Hashable {
+struct Dessert: Identifiable, Hashable {
     let id = UUID()
     var name: String
     var icon: String
@@ -140,30 +140,30 @@ struct Desert: Identifiable, Hashable {
 /**
  The list used in the model.
  */
-class Deserts: ObservableObject {
-    @Published var deserts: [Desert] = [
-        Desert(name: "Strudel", icon: "🍎"),
-        Desert(name: "Pie", icon: "🍌"),
-        Desert(name: "Cake", icon: "🍊"),
-        Desert(name: "Jello", icon: "🍓"),
-        Desert(name: "Crumble", icon: "🫐" ),
+class Desserts: ObservableObject {
+    @Published var desserts: [Dessert] = [
+        Dessert(name: "Strudel", icon: "🍎"),
+        Dessert(name: "Pie", icon: "🍌"),
+        Dessert(name: "Cake", icon: "🍊"),
+        Dessert(name: "Jello", icon: "🍓"),
+        Dessert(name: "Crumble", icon: "🫐" ),
     ]
 }
 
-var gDeserts = Deserts()
+var gDesserts = Desserts()
 
-//var gDeserts = [
-//    Desert(name: "Strudel", icon: "🍎"),
-//    Desert(name: "Pie", icon: "🍌"),
-//    Desert(name: "Cake", icon: "🍊"),
-//    Desert(name: "Jello", icon: "🍓"),
-//    Desert(name: "Crumble", icon: "🫐" ),
+//var gDesserts = [
+//    Dessert(name: "Strudel", icon: "🍎"),
+//    Dessert(name: "Pie", icon: "🍌"),
+//    Dessert(name: "Cake", icon: "🍊"),
+//    Dessert(name: "Jello", icon: "🍓"),
+//    Dessert(name: "Crumble", icon: "🫐" ),
 //]
 
 /**
  Report a change in the item selected.
  */
-func selectedDesert(old: Desert, new: Desert) {
+func selectedDessert(old: Dessert, new: Dessert) {
     print("selected \(old.name) to \(new.name)")
 }
 
@@ -171,36 +171,36 @@ func selectedDesert(old: Desert, new: Desert) {
 /**
  Update the name of a given item in a model's list.
  */
-func renameDesert(_ desert: Desert) {
-    if let index = gDeserts.deserts.firstIndex(where: { $0.id == desert.id } ) {
-        print("rename \(gDeserts.deserts[index].name) to \(desert.name)")
-        gDeserts.deserts[index].name = desert.name
+func renameDessert(_ dessert: Dessert) {
+    if let index = gDesserts.desserts.firstIndex(where: { $0.id == dessert.id } ) {
+        print("rename \(gDesserts.desserts[index].name) to \(dessert.name)")
+        gDesserts.desserts[index].name = dessert.name
     }
-    dump(gDeserts.deserts)
+    dump(gDesserts.desserts)
 }
 
 /**
  Remove the item in a model's list at a given index.
  */
-func removeDesert(at index: Int) {
-//    if let index = gDeserts.firstIndex(of: desert) {
-//        gDeserts.remove(at: index)
+func removeDessert(at index: Int) {
+//    if let index = gDesserts.firstIndex(of: dessert) {
+//        gDesserts.remove(at: index)
 //    }
-//    gDeserts.remove(at: index)
-    dump(gDeserts.deserts)
+//    gDesserts.remove(at: index)
+    dump(gDesserts.desserts)
 }
 
 /**
  Append an item to the model's list
  */
-func addDesert(_ desert: Desert) {
-//    gDeserts.append(desert)
-    dump(gDeserts.deserts)
+func addDessert(_ dessert: Dessert) {
+//    gDesserts.append(dessert)
+    dump(gDesserts.desserts)
 }
 
 /**
  Update the order of items in a model's list.
  */
-func reorderDeserts() {
-    dump(gDeserts.deserts)
+func reorderDesserts() {
+    dump(gDesserts.desserts)
 }
