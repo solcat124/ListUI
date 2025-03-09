@@ -16,6 +16,21 @@ struct ContentView: View {
             Text("Hello, world!")
         }
         .padding()
+        
+        VStack {
+            EditableListView()
+        }
+        .padding()
+
+        VStack {
+            EditableListView2()
+        }
+        .padding()
+
+        VStack {
+            EditableListView3()
+        }
+        .padding()
     }
 }
 
